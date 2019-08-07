@@ -1,6 +1,0 @@
-[2019-08-06 23:16:46,197] {scheduler_job.py:146} INFO - Started process (PID=5008) to work on /Users/vj/Documents/My_Mac/Projects/aws_etl_airflow/airflow/dags/test_dag.py
-[2019-08-06 23:16:46,213] {scheduler_job.py:1493} INFO - Processing file /Users/vj/Documents/My_Mac/Projects/aws_etl_airflow/airflow/dags/test_dag.py for tasks to queue
-[2019-08-06 23:16:46,215] {logging_mixin.py:95} INFO - [2019-08-06 23:16:46,214] {dagbag.py:90} INFO - Filling up the DagBag from /Users/vj/Documents/My_Mac/Projects/aws_etl_airflow/airflow/dags/test_dag.py
-[2019-08-06 23:16:46,229] {scheduler_job.py:1505} INFO - DAG(s) dict_keys(['first_task.task']) retrieved from /Users/vj/Documents/My_Mac/Projects/aws_etl_airflow/airflow/dags/test_dag.py
-[2019-08-06 23:16:46,243] {logging_mixin.py:95} INFO - [2019-08-06 23:16:46,242] {dag.py:1303} INFO - Creating ORM DAG for first_task.task
-[2019-08-06 23:16:46,265] {scheduler_job.py:152} INFO - Processing /Users/vj/Documents/My_Mac/Projects/aws_etl_airflow/airflow/dags/test_dag.py took 0.068 seconds
