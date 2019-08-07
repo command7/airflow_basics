@@ -72,4 +72,5 @@ fabric.properties
 
 .venv/
 airflow/logs/
+airflow/airflow.db
 
