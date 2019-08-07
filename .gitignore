@@ -45,7 +45,7 @@ cmake-build-*/
 # File-based project format
 *.iws
 
-.idea/*
+
 # IntelliJ
 out/
 
@@ -71,3 +71,5 @@ fabric.properties
 .idea/caches/build_file_checksums.ser
 
 .venv/*
+logs/*
+

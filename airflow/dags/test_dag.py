@@ -7,7 +7,7 @@ def say_hello():
 
 
 dag = DAG(
-    'first_task.task',
+    'first_dag',
     start_date=datetime.datetime.now()
 )
 
