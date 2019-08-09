@@ -14,7 +14,9 @@ def copy_contents_to_local():
                                     prefix=udacity_bucket_prefix)
     for object_key in object_keys:
         if object_key.endswith('csv'):
+            destination_filename = object_key.split('/')[-1]
             logging.info(object_key)
+            logging.info(destination_filename)
         # s3_hook.copy_object(source_bucket_key=object_key,
         #                     dest_bucket_key=object_key,
         #                     dest_bucket_name=my_bucket)
