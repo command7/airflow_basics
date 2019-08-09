@@ -7,8 +7,8 @@ import logging, datetime
 
 def log_bucket_items():
     s3_hook = S3Hook(aws_conn_id='aws_credentials')
-    bucket_name = Variable.get('s3_bucket')
-    bucket_prefix = Variable.get('s3_prefix')
+    bucket_name = Variable.get('udacity_s3_bucket')
+    bucket_prefix = Variable.get('udacity_s3_prefix')
     bucket_items = s3_hook.list_keys(bucket_name=bucket_name, prefix=bucket_prefix)
     for bucket_item in bucket_items:
         logging.info(f"- s3://{bucket_name}/{bucket_prefix}/{bucket_item}")
