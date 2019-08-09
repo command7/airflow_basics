@@ -17,9 +17,11 @@ def copy_contents_to_local():
             destination_filename = object_key.split('/')[-1]
             logging.info(object_key)
             logging.info(destination_filename)
-        # s3_hook.copy_object(source_bucket_key=object_key,
-        #                     dest_bucket_key=object_key,
-        #                     dest_bucket_name=my_bucket)
+            s3_hook.copy_object(source_bucket_name=udacity_bucket,
+                                source_bucket_key=object_key,
+                                dest_bucket_key=destination_filename,
+                                dest_bucket_name=my_bucket)
+
 
 copy_dag = DAG(
     'Copy_data_between_s3buckets',
