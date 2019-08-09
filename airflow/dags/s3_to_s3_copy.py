@@ -6,13 +6,18 @@ import datetime, logging
 
 
 def copy_contents_to_local():
-    # s3_hook = S3Hook(aws_conn_id='aws_credentials')
+    s3_hook = S3Hook(aws_conn_id='aws_credentials')
     udacity_bucket = Variable.get('udacity_s3_bucket')
     udacity_bucket_prefix = Variable.get('udacity_s3_prefix')
     my_bucket = Variable.get('my_s3_bucket')
-    logging.info(f'Udacity bucket name is {udacity_bucket}/{udacity_bucket_prefix}')
-    logging.info(f'My bucket name is {my_bucket}')
-
+    object_keys = s3_hook.list_keys(bucket_name=udacity_bucket,
+                                    prefix=udacity_bucket_prefix)
+    for object_key in object_keys:
+        if object_key.endswith('csv'):
+            logging.info(object_key)
+        # s3_hook.copy_object(source_bucket_key=object_key,
+        #                     dest_bucket_key=object_key,
+        #                     dest_bucket_name=my_bucket)
 
 copy_dag = DAG(
     'Copy_data_between_s3buckets',
