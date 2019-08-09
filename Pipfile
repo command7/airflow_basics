@@ -9,6 +9,7 @@ verify_ssl = true
 apache-airflow = "*"
 cryptography = "*"
 boto3 = "*"
+jupyter = "*"
 
 [requires]
 python_version = "3.7"
