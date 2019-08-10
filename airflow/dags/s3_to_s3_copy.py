@@ -1,6 +1,7 @@
 from airflow import DAG
 from airflow.hooks.S3_hook import S3Hook
 from airflow.hooks.postgres_hook import PostgresHook
+from airflow.contrib.hooks.aws_hook import AwsHook
 from airflow.models import Variable
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.postgres_operator import PostgresOperator
@@ -23,6 +24,16 @@ CREATE TABLE IF NOT EXISTS TRIPS (
     birthyear SMALLINT NOT NULL,
     PRIMARY KEY(trip_id))
     DISTSTYLE ALL;
+"""
+
+
+copy_all_trips_sql = """
+COPY {}
+FROM {}
+ACCESS_KEY_ID {}
+SECRET_ACCESS_KEY {}
+IGNOREHEADER 1
+DELIMITER ','
 """
 
 def copy_contents_to_local():
@@ -73,13 +84,23 @@ def validate_s3_t0_s3_copy():
             logging.info(missing_file)
 
 
+# def copy_data_to_redshift():
+#     aws_hook = AwsHook(aws_conn_id='aws_credentials')
+#     credentials = aws_hook.get_credentials()
+#     access_key = credentials.access_key
+#     secret_key = credentials.secret_key
+#     table_name = 'trips'
+#     s3_file_location = '"s3://bikeshare-data-copy/data-pipelines/divvy/unpartitioned/divvy_trips_2018.csv"'
+#     redshift_hook = PostgresHook('redshift')
+#     redshift_hook.run(copy_all_trips_sql.format(table_name, s3_file_location, access_key, secret_key))
+
 copy_dag = DAG(
     'Copy_data_between_s3buckets',
     start_date=datetime.datetime.now()
 )
 
 
-copy_task = PythonOperator(
+s3_s3_copy_task = PythonOperator(
     task_id='Copy_s3_to_s3.task',
     python_callable=copy_contents_to_local,
     dag=copy_dag
@@ -97,5 +118,12 @@ create_trips_table = PostgresOperator(
     sql=create_trips_table_sql
 )
 
-copy_task >> validate_task
+# copy_trips_data = PythonOperator(
+#     task_id='Copy_trips_data.task',
+#     python_callable=copy_data_to_redshift,
+#     dag=copy_dag
+# )
+
+s3_s3_copy_task >> validate_task
 validate_task >> create_trips_table
+# create_trips_table >> copy_trips_data
