@@ -1,9 +1,29 @@
 from airflow import DAG
 from airflow.hooks.S3_hook import S3Hook
+from airflow.hooks.postgres_hook import PostgresHook
 from airflow.models import Variable
 from airflow.operators.python_operator import PythonOperator
+from airflow.operators.postgres_operator import PostgresOperator
 import datetime, logging
 
+
+create_trips_table_sql = """
+CREATE TABLE IF NOT EXISTS TRIPS (
+    trip_id INTEGER NOT NULL,
+    start_time TIMESTAMP NOT NULL,
+    end_time TIMESTAMP NOT NULL,
+    bikeid INTEGER NOT NULL,
+    tripduration DECIMAL(16, 2) NOT NULL,
+    from_station_id INTEGER NOT NULL,
+    from_station_name VARCHAR(100) NOT NULL,
+    to_station_id INTEGER NOT NULL,
+    to_station_name VARCHAR(100) NOT NULL,
+    usertype VARCHAR(20) NOT NULL,
+    gender VARCHAR(6) NOT NULL,
+    birthyear SMALLINT NOT NULL,
+    PRIMARY KEY(trip_id))
+    DISTSTYLE ALL;
+"""
 
 def copy_contents_to_local():
     s3_hook = S3Hook(aws_conn_id='aws_credentials')
@@ -71,4 +91,11 @@ validate_task = PythonOperator(
     dag=copy_dag
 )
 
+create_trips_table = PostgresOperator(
+    task_id='Create_trips_table.task',
+    postgres_conn_id='redshift',
+    sql=create_trips_table_sql
+)
+
 copy_task >> validate_task
+validate_task >> create_trips_table
