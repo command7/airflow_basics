@@ -100,17 +100,17 @@ copy_dag = DAG(
 )
 
 
-# s3_s3_copy_task = PythonOperator(
-#     task_id='Copy_s3_to_s3.task',
-#     python_callable=copy_contents_to_local,
-#     dag=copy_dag
-# )
-#
-# validate_task = PythonOperator(
-#     task_id='Check_copied_files.task',
-#     python_callable=validate_s3_t0_s3_copy,
-#     dag=copy_dag
-# )
+s3_s3_copy_task = PythonOperator(
+    task_id='Copy_s3_to_s3.task',
+    python_callable=copy_contents_to_local,
+    dag=copy_dag
+)
+
+validate_task = PythonOperator(
+    task_id='Check_copied_files.task',
+    python_callable=validate_s3_t0_s3_copy,
+    dag=copy_dag
+)
 
 create_trips_table = PostgresOperator(
     task_id='Create_trips_table.task',
@@ -124,6 +124,6 @@ copy_trips_data = PythonOperator(
     dag=copy_dag
 )
 
-# s3_s3_copy_task >> validate_task
-# validate_task >> create_trips_table
+s3_s3_copy_task >> validate_task
+validate_task >> create_trips_table
 create_trips_table >> copy_trips_data
