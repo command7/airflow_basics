@@ -90,8 +90,7 @@ def copy_data_to_redshift():
     access_key = credentials.access_key
     secret_key = credentials.secret_key
     table_name = 'trips'
-    s3_file_location = 's3://bikeshare-data-copy/data-pipelines/divvy/unpartitioned/divvy_trips_2018.csv'
-    s3_file_location = 's3://bikeshare-data-copy/data-pipelines/divvy/unpartitioned/divvy_trips_2018.csv'
+    s3_file_location = 's3://bikeshare-data-copy/divvy/unpartitioned/divvy_trips_2018.csv'
     redshift_hook = PostgresHook('redshift_connection')
     redshift_hook.run(copy_all_trips_sql.format(table_name, s3_file_location, access_key, secret_key))
 
