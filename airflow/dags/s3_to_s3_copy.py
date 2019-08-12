@@ -45,14 +45,15 @@ def move_data_to_archive_bucket():
                                     prefix=unprocessed_data_prefix)
     for object_key in object_keys:
         logging.info(object_key)
-        # if object_key.endswith('csv'):
-        #     destination_filename = object_key[15:]
-        #     logging.info(f'Copying {object_key}')
-        #     s3_hook.copy_object(source_bucket_name=udacity_bucket,
-        #                         source_bucket_key=object_key,
-        #                         dest_bucket_key=destination_filename,
-        #                         dest_bucket_name=my_bucket)
-        #     logging.info(f'{object_key} copied as {destination_filename}')
+        if object_key.endswith('csv'):
+            destination_filename = object_key[17:]
+            logging.info(f'Destination : {destination_filename}')
+            # logging.info(f'Copying {object_key}')
+            # s3_hook.copy_object(source_bucket_name=udacity_bucket,
+            #                     source_bucket_key=object_key,
+            #                     dest_bucket_key=destination_filename,
+            #                     dest_bucket_name=my_bucket)
+            # logging.info(f'{object_key} copied as {destination_filename}')
 
 
 def validate_s3_t0_s3_copy():
