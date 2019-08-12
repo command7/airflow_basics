@@ -102,8 +102,8 @@ copy_dag = DAG(
 )
 
 
-s3_s3_copy_task = PythonOperator(
-    task_id='Copy_s3_to_s3.task',
+archive_data = PythonOperator(
+    task_id='Archive_processed_data.task',
     python_callable=move_data_to_archive_bucket,
     dag=copy_dag
 )
