@@ -36,22 +36,23 @@ IGNOREHEADER 1
 DELIMITER ','
 """
 
-def copy_contents_to_local():
+def move_data_to_archive_bucket():
     s3_hook = S3Hook(aws_conn_id='aws_credentials')
-    udacity_bucket = Variable.get('udacity_s3_bucket')
-    udacity_bucket_prefix = Variable.get('udacity_s3_prefix')
-    my_bucket = Variable.get('my_s3_bucket')
-    object_keys = s3_hook.list_keys(bucket_name=udacity_bucket,
-                                    prefix=udacity_bucket_prefix)
+    data_bucket = Variable.get('bikeshare_etl_bucket')
+    unprocessed_data_prefix = Variable.get('bikeshare_source_prefix')
+    archive_bucket_prefix = Variable.get('bikeshare_archive_prefix')
+    object_keys = s3_hook.list_keys(bucket_name=data_bucket,
+                                    prefix=unprocessed_data_prefix)
     for object_key in object_keys:
-        if object_key.endswith('csv'):
-            destination_filename = object_key[15:]
-            logging.info(f'Copying {object_key}')
-            s3_hook.copy_object(source_bucket_name=udacity_bucket,
-                                source_bucket_key=object_key,
-                                dest_bucket_key=destination_filename,
-                                dest_bucket_name=my_bucket)
-            logging.info(f'{object_key} copied as {destination_filename}')
+        logging.info(object_key)
+        # if object_key.endswith('csv'):
+        #     destination_filename = object_key[15:]
+        #     logging.info(f'Copying {object_key}')
+        #     s3_hook.copy_object(source_bucket_name=udacity_bucket,
+        #                         source_bucket_key=object_key,
+        #                         dest_bucket_key=destination_filename,
+        #                         dest_bucket_name=my_bucket)
+        #     logging.info(f'{object_key} copied as {destination_filename}')
 
 
 def validate_s3_t0_s3_copy():
@@ -102,28 +103,28 @@ copy_dag = DAG(
 
 s3_s3_copy_task = PythonOperator(
     task_id='Copy_s3_to_s3.task',
-    python_callable=copy_contents_to_local,
+    python_callable=move_data_to_archive_bucket,
     dag=copy_dag
 )
 
-validate_task = PythonOperator(
-    task_id='Check_copied_files.task',
-    python_callable=validate_s3_t0_s3_copy,
-    dag=copy_dag
-)
-
-create_trips_table = PostgresOperator(
-    task_id='Create_trips_table.task',
-    postgres_conn_id='redshift_connection',
-    sql=create_trips_table_sql
-)
-
-copy_trips_data = PythonOperator(
-    task_id='Copy_trips_data.task',
-    python_callable=copy_data_to_redshift,
-    dag=copy_dag
-)
-
-s3_s3_copy_task >> validate_task
-validate_task >> create_trips_table
-create_trips_table >> copy_trips_data
+# validate_task = PythonOperator(
+#     task_id='Check_copied_files.task',
+#     python_callable=validate_s3_t0_s3_copy,
+#     dag=copy_dag
+# )
+#
+# create_trips_table = PostgresOperator(
+#     task_id='Create_trips_table.task',
+#     postgres_conn_id='redshift_connection',
+#     sql=create_trips_table_sql
+# )
+#
+# copy_trips_data = PythonOperator(
+#     task_id='Copy_trips_data.task',
+#     python_callable=copy_data_to_redshift,
+#     dag=copy_dag
+# )
+#
+# s3_s3_copy_task >> validate_task
+# validate_task >> create_trips_table
+# create_trips_table >> copy_trips_data
