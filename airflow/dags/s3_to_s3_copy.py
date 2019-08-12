@@ -92,7 +92,7 @@ def copy_data_to_redshift():
     access_key = credentials.access_key
     secret_key = credentials.secret_key
     table_name = 'trips'
-    s3_file_location = 's3://bikeshare-data-copy/divvy/unpartitioned/divvy_trips_2018.csv'
+    s3_file_location = 's3://bikeshare-data-copy/unprocessed_data/divvy/unpartitioned/divvy_trips_2018.csv'
     redshift_hook = PostgresHook('redshift_connection')
     redshift_hook.run(copy_all_trips_sql.format(table_name, s3_file_location, access_key, secret_key))
 
@@ -113,19 +113,19 @@ archive_data = PythonOperator(
 #     python_callable=validate_s3_t0_s3_copy,
 #     dag=copy_dag
 # )
-#
-# create_trips_table = PostgresOperator(
-#     task_id='Create_trips_table.task',
-#     postgres_conn_id='redshift_connection',
-#     sql=create_trips_table_sql
-# )
-#
-# copy_trips_data = PythonOperator(
-#     task_id='Copy_trips_data.task',
-#     python_callable=copy_data_to_redshift,
-#     dag=copy_dag
-# )
-#
-# s3_s3_copy_task >> validate_task
-# validate_task >> create_trips_table
-# create_trips_table >> copy_trips_data
+
+create_trips_table = PostgresOperator(
+    task_id='Create_trips_table.task',
+    postgres_conn_id='redshift_connection',
+    sql=create_trips_table_sql
+)
+
+copy_trips_data = PythonOperator(
+    task_id='Copy_trips_data.task',
+    python_callable=copy_data_to_redshift,
+    dag=copy_dag
+)
+
+
+create_trips_table >> copy_trips_data
+copy_trips_data >> archive_data
